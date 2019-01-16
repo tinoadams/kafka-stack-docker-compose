@@ -1,0 +1,26 @@
+version: "2.1"
+services:
+  jobmanager:
+    restart: unless-stopped
+    image: flink:1.6-alpine
+    expose:
+      - "6123"
+    ports:
+      - "48081:8081"
+    command: jobmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+
+  taskmanager:
+    restart: unless-stopped
+    image: flink:1.6-alpine
+    expose:
+      - "6121"
+      - "6122"
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    links:
+      - "jobmanager:jobmanager"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
